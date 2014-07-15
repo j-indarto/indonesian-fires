@@ -1,4 +1,4 @@
-# Normalized Burn Ratio on Google Earth Engin
+# Normalized Burn Ratio on Google Earth Engine
 
 ```javascript
 // Normalized Burn Ratio
