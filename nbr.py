@@ -13,8 +13,17 @@
 #   Recent fires: ft:1UkooS2ir_Rx3Kbg7K2RWV9dTOCCtrjDWizZE_hL0
 
 import ee
+import os
 import sys
 import getopt
+
+
+def init():
+    path = os.path.join(os.path.abspath(
+        os.path.dirname('__file__')), 'privatekey.pem')
+    ee.Initialize(ee.ServiceAccountCredentials(
+        '872868960419@developer.gserviceaccount.com', path))
+
 
 FIRES = 'ft:1UkooS2ir_Rx3Kbg7K2RWV9dTOCCtrjDWizZE_hL0'
 INIT = ['2013-03-30', '2013-09-30']
@@ -116,10 +125,17 @@ def loadFireBuffer(fire_location, meters):
     return buffered.union()
 
 
+def genNBR(meters):
+    nbr = generateBurnRatio(INIT, POST)
+    fire_buffer = loadFireBuffer(FIRES, meters)
+    return nbr.clip(fire_buffer)
+
+
 def main():
     # Main function that accepts the number of meters and returns the
     # normalized burn ratio image clipped to the fire buffer defined by the
     # buffer length
+    init()
     try:
         opts, args = getopt.getopt(sys.argv[1:], "m:")
     except getopt.GetoptError as err:
@@ -127,9 +143,7 @@ def main():
 
     for opt, arg in opts:
         if opt in ('-m'):
-            nbr = generateBurnRatio(INIT, POST)
-            fire_buffer = loadFireBuffer(FIRES, int(arg))
-            return nbr.clip(fire_buffer)
+            return genNBR(int(args))
 
 if __name__ == "__main__":
     main()
